@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CIRCUIT BENT: analog glitch and CRT damage for your NLE</title>
+<meta name="description" content="A circuit-bent glitch box, a video mixer and a CRT monitor, simulated live inside Final Cut Pro, Motion, After Effects and Premiere Pro. One plugin, eight presets, a perpetual license.">
+<link rel="icon" href="media/app-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"> <!-- taste-skill-ignore: font URL, not rendered text -->
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/site.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<video id="src-video" src="media/sample_clip.mp4" muted loop playsinline autoplay hidden></video>
+
+<!-- ============ HERO — Control that reads the page ============ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-mark">
+      <img src="media/app-icon.svg" alt="" width="28" height="28">
+      <span>CIRCUIT BENT</span>
+    </div>
+    <a class="textlink hero-toplink" href="#pricing">Download the trial →</a>
+    <div class="hero-copy">
+      <h1>
+        <span class="line"><span>A <span class="glitch" data-text="glitch">glitch</span> box, a mixer,</span></span>
+        <span class="line"><span>a CRT — no hardware.</span></span>
+      </h1>
+      <p>Eight presets, full manual control, running live in Final Cut Pro.</p>
+      <div class="hero-actions">
+        <a class="btn btn-accent" href="#pricing">Start the 14-day trial</a>
+        <a class="textlink" href="#how-it-works">How it runs ↓</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="engine-frag" data-ui>
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="engine-ui">
+        <div class="engine-readout">
+          <span>Mode <code id="hero-mode">LAVENDER</code></span>
+          <span>Energy <code id="hero-energy">0.40</code></span>
+        </div>
+        <div class="engine-row">
+          <label for="hero-destr">Destruction</label>
+          <input id="hero-destr" type="range" min="0" max="1" step="0.01" value="0.45" aria-label="Destruction">
+          <code id="hero-destr-v">0.45</code>
+        </div>
+        <div class="tone-set" id="hero-tones" role="group" aria-label="Tone">
+          <button data-mode="0" type="button">CLEAN</button>
+          <button data-mode="1" type="button" aria-pressed="true">LAVENDER</button>
+          <button data-mode="2" type="button">HOT</button>
+          <button data-mode="3" type="button">MONO</button>
+          <button data-mode="4" type="button">INVERT</button>
+          <button data-mode="5" type="button">NIGHT</button>
+          <button data-mode="6" type="button">COLOR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT — Founder's letter ============ -->
+<section class="about section" id="about">
+  <h2 class="section-head wrap" style="text-align:center">Why this exists</h2>
+  <div class="letter" data-reveal>
+    <img class="letter-photo" src="media/presets/contour.png" alt="CIRCUIT BENT, Contour preset, real render, pinned beside the letter" width="220" height="220" loading="lazy">
+    <div class="letter-mark"><img src="media/app-icon.svg" alt="CIRCUIT BENT"></div>
+    <p>CIRCUIT BENT started as a question: could the exact look of a circuit-bent glitch box feeding a video mixer, finished on a CRT, be captured without keeping that hardware plugged in and powered on every time it's needed.</p>
+    <p>The chain is built as a simulation instead of a filter. It runs forward in real time: tone jumps, torn frames, rolling picture and stutters keep happening for as long as the clip plays, driven by a random seed, the same way the real hardware never did quite the same thing twice.</p>
+    <p>The part that took longest wasn't the look. It was making that simulation <mark>deterministic</mark>: the same settings at the same point in the clip always render the same way, so scrubbing, rendering and re-exporting all match. A hardware glitch box never had to promise that. A plugin does.</p>
+    <p>It ships as one plugin, two templates, and a license key emailed directly after purchase. No subscription, no phone-home, no account to create.</p>
+    <div class="sign">
+      <div class="name">CIRCUIT BENT</div>
+      <div class="role">Sold direct. No subscription, no middleman.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOWCASE — live preset switcher ============ -->
+<section class="showcase section" id="showcase">
+  <div class="wrap">
+    <h2 class="section-head">One simulation, eight different ways to break it.</h2>
+    <div class="showcase-grid">
+      <div class="preset-list" id="preset-list" role="listbox" aria-label="Presets">
+        <!-- buttons injected by site.js from the real PRESETS table -->
+      </div>
+      <div class="preset-stage" data-reveal>
+        <div class="preset-sheet" data-ui>
+          <canvas id="showcase-canvas" aria-hidden="true"></canvas>
+        </div>
+        <div class="preset-tag" id="preset-tag">Contour · <code>destr .45</code>, <code>stripe .85</code>, <code>screen on</code></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY — photo tiles with label strips ============ -->
+<section class="gallery section" id="gallery">
+  <div class="wrap">
+    <h2 class="section-head">All eight presets, actually rendered.</h2>
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- 8 tiles injected by site.js, one real captured frame per preset -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES — panel with margin notes ============ -->
+<section class="features section" id="features">
+  <div class="wrap">
+    <div class="features-grid">
+      <div class="notes-left" data-reveal>
+        <div class="note">
+          <div class="nname">Wobble</div>
+          <div class="ndesc">Random horizontal wobble, calm and wild bands, with the occasional band that snaps sideways.</div>
+        </div>
+        <div class="note">
+          <div class="nname">Stutter hold</div>
+          <div class="ndesc">Holds a frame for several frames by asking the host for it again, a freeze that still reads neighboring frames.</div>
+        </div>
+        <div class="note">
+          <div class="nname">Determinism</div>
+          <div class="ndesc">The same settings at the same timecode always render the same way, so scrubbing and re-exporting match.</div>
+        </div>
+      </div>
+      <div class="panel-col">
+        <h2 class="section-head" style="text-align:right">Every control, exposed.</h2>
+        <div class="panel-ui" data-ui>
+          <div class="ptitle">CIRCUIT BENT — Inspector</div>
+          <div class="pgroup" data-grp="bend"><h4>Bend</h4>
+            <div class="prow"><span>Wobble</span><code>0.40</code></div>
+            <div class="prow"><span>Melt</span><code>0.20</code></div>
+            <div class="prow"><span>Tear seams</span><code>0.20</code></div>
+          </div>
+          <div class="pgroup" data-grp="tone"><h4>Tone</h4>
+            <div class="prow"><span>Mode</span><code>Lavender</code></div>
+            <div class="prow"><span>Hue</span><code>0.62</code></div>
+            <div class="prow"><span>Auto tone</span><code>Off</code></div>
+          </div>
+          <div class="pgroup" data-grp="damage"><h4>Damage</h4>
+            <div class="prow"><span>Line glitches</span><code>0.40</code></div>
+            <div class="prow"><span>Edge streak</span><code>0.30</code></div>
+            <div class="prow"><span>Regional hits</span><code>0.50</code></div>
+            <div class="prow"><span>Crush ↔ blow</span><code>0.00</code></div>
+          </div>
+          <div class="pgroup" data-grp="mixer"><h4>Mixer</h4>
+            <div class="prow"><span>Mirror</span><code>None</code></div>
+            <div class="prow"><span>Multi grid</span><code>1×</code></div>
+            <div class="prow"><span>Stutter hold</span><code>0.10</code></div>
+          </div>
+          <div class="pgroup" data-grp="crt"><h4>CRT</h4>
+            <div class="prow"><span>CRT texture</span><code>Off</code></div>
+            <div class="prow"><span>Scanlines</span><code>0.50</code></div>
+          </div>
+          <div class="pgroup" data-grp="signal"><h4>Signal</h4>
+            <div class="prow"><span>H. bandwidth</span><code>0.60</code></div>
+            <div class="prow"><span>Dot crawl</span><code>0.30</code></div>
+            <div class="prow"><span>Grain</span><code>0.35</code></div>
+          </div>
+          <div class="pgroup" data-grp="timing"><h4>Timing</h4>
+            <div class="prow"><span>Chaos</span><code>1.00×</code></div>
+            <div class="prow"><span>Tone family hold</span><code>30s</code></div>
+          </div>
+          <div class="pgroup" data-grp="reactivity"><h4>Reactivity</h4>
+            <div class="prow"><span>Rate</span><code>4.61 Hz</code></div>
+            <div class="prow"><span>Pulses</span><code>Destr · Melt · Wobble · Stripe · Neon · Streak</code></div>
+          </div>
+        </div>
+      </div>
+      <div class="notes-right" data-reveal>
+        <div class="note">
+          <div class="nname">Mirror</div>
+          <div class="ndesc">Left/right, top/bottom or quad: the video mixer's own symmetry tricks.</div>
+        </div>
+        <div class="note">
+          <div class="nname">Reactivity</div>
+          <div class="ndesc">A tempo pulse set in Hz, not audio analysis. No plugin host gives a video effect real audio to listen to.</div>
+        </div>
+        <div class="note">
+          <div class="nname">Seven tone curves</div>
+          <div class="ndesc">Including an inverted mode and a measured night-vision curve, switched by hand or on auto.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS — call and response ============ -->
+<section class="how section" id="how-it-works">
+  <div class="wrap">
+    <h2 class="section-head" style="text-align:center">What happens after you drop it on a clip.</h2>
+    <div class="how-col">
+      <div class="exchange" data-reveal>
+        <p class="lede">Drop CIRCUIT BENT on your clip.</p>
+        <div class="call">
+          <div class="thumbs" data-ui>
+            <figure><img src="media/template-circuit-bent.png" alt="CIRCUIT BENT template thumbnail, Final Cut Effects browser" width="140" height="79"><figcaption>CIRCUIT BENT</figcaption></figure>
+            <figure><img src="media/template-circuit-bent-quick.png" alt="CIRCUIT BENT Quick template thumbnail, Final Cut Effects browser" width="140" height="79"><figcaption>CIRCUIT BENT Quick</figcaption></figure>
+          </div>
+        </div>
+        <div class="response">
+          <div class="engine-frag" data-ui>
+            <canvas id="how-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="exchange" data-reveal>
+        <p class="lede">Choose one of eight presets.</p>
+        <div class="call">
+          <div class="popup" data-ui>
+            <div class="opt">Contour <code>default</code></div>
+            <div class="opt sel">Comeback <code>selected</code></div>
+            <div class="opt">Wrecked <code>—</code></div>
+          </div>
+        </div>
+        <div class="response">
+          <img src="media/presets/comeback.png" alt="CIRCUIT BENT, Comeback preset, real render" width="350" height="195" loading="lazy">
+        </div>
+      </div>
+
+      <div class="exchange final" data-reveal>
+        <p class="lede">It keeps generating damage for as long as the clip plays.</p>
+        <div class="call">
+          <div class="scrub" data-ui>
+            <code>00:00:04:12</code>
+            <div class="track"><div class="head" style="left:34%"></div></div>
+            <code>00:00:18:00</code>
+          </div>
+        </div>
+        <div class="response">
+          <img src="media/presets/wrecked.png" alt="CIRCUIT BENT, Wrecked preset, real render at full destruction" width="350" height="195" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROOF — real QA numbers on tiles ============ -->
+<section class="proof section" id="proof">
+  <div class="wrap">
+    <div class="proof-grid" data-reveal>
+      <div class="proof-tile head">
+        <h3>Tested, not assumed.</h3>
+      </div>
+      <div class="proof-tile"><div class="num"><code>12/12</code></div><div class="cap">Engine unit tests passed: determinism, NaN safety, parameter ranges.</div></div>
+      <div class="proof-tile"><div class="num"><code>15/15</code></div><div class="cap">Licensing unit tests passed: key codec, trial state, activation.</div></div>
+      <div class="proof-tile"><div class="num"><code>10,000</code></div><div class="cap">Random frames rendered with zero NaN, in an 89.8s stress run.</div></div>
+      <div class="proof-tile"><div class="num"><code>8/8</code></div><div class="cap">Presets verified live in Final Cut Pro, matching spec exactly.</div></div>
+      <div class="proof-tile"><div class="num"><code>0</code></div><div class="cap">Crashes across blading, parameter extremes, and media-mode switches.</div></div>
+      <div class="proof-tile"><div class="num"><code>4K60p</code></div><div class="cap">Playback stayed smooth at native 4K60p, past the 30fps target.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING — the price, very large ============ -->
+<section class="pricing section" id="pricing">
+  <div class="wrap">
+    <div class="pricing-grid">
+      <div class="pricing-left" data-reveal>
+        <h2>No subscription, no upsell.</h2>
+        <p>A perpetual license, bought once. Works offline — the license check never phones home — and keeps rendering old projects correctly after you update.</p>
+      </div>
+      <div class="pricing-right" data-reveal>
+        <div class="price-figure">
+          <span class="cur">$</span><span class="num">99</span><span class="period">once</span>
+          <img class="price-overlap" src="media/app-icon.svg" alt="">
+        </div>
+        <p class="price-intro">Launched at $69. Moves to $99 once the intro window closes.</p>
+        <div class="price-included">
+          <div>One-time payment, perpetual license</div>
+          <div>Works offline, the license never phones home</div>
+          <div>14-day full-quality trial, no watermark, no card</div>
+          <div>Your key, emailed right after purchase</div>
+        </div>
+        <a class="btn btn-strong" href="#buy">Buy CIRCUIT BENT</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ — accordion of filled tiles ============ -->
+<section class="faq section" id="faq">
+  <div class="wrap">
+    <div class="faq-grid">
+      <h2 class="section-head faq-head">Common questions.</h2>
+      <div class="faq-list" data-reveal>
+        <details name="faq">
+          <summary>Does the trial watermark my footage?<span class="faq-plus"></span></summary>
+          <div class="answer">No. The 14-day trial renders at full quality. It simply stops working after 14 days unless you buy a license.</div>
+        </details>
+        <details name="faq">
+          <summary>Does it need an internet connection to run?<span class="faq-plus"></span></summary>
+          <div class="answer">No. License activation is offline-friendly and doesn't phone home on every launch.</div>
+        </details>
+        <details name="faq">
+          <summary>Does Reactivity analyze the audio in my clip?<span class="faq-plus"></span></summary>
+          <div class="answer">No. There's no audio API available to a Final Cut Pro video effect. Reactivity is a tempo pulse you set with a Hz slider, not real audio analysis, and it's labeled that way in the plugin.</div>
+        </details>
+        <details name="faq">
+          <summary>Will my projects still render if I upgrade later?<span class="faq-plus"></span></summary>
+          <div class="answer">Yes. Versioning follows Apple's guidance for plugin updates, so existing projects keep rendering with old versions until you choose to update.</div>
+        </details>
+        <details name="faq">
+          <summary>Which hosts does it actually run in?<span class="faq-plus"></span></summary>
+          <div class="answer">Final Cut Pro and Motion today. After Effects and Premiere Pro run the same real engine, Mac only for now; a Windows build doesn't exist yet.</div>
+        </details>
+        <details name="faq">
+          <summary>Does CIRCUIT BENT Quick exist on every host?<span class="faq-plus"></span></summary>
+          <div class="answer">No. It's a Final Cut / Motion template limited to Preset, Destruction and Mix. After Effects and Premiere use the plugin's own collapsible parameter groups instead.</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA — one word is the button ============ -->
+<a class="cta-band" href="https://thoughtful65.gumroad.com/l/circuit-bent" id="buy">
+  <span class="corner-note">One click, delivered by email.</span>
+  <svg class="corner-arrow" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4"><path d="M12 36 L36 12 M16 12 H36 V32"/></svg>
+  <span class="word">BUY</span>
+</a>
+
+<!-- ============ FOOTER — a footer of tiles ============ -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="ftile f-statement">
+      <p>Sold direct. No subscriptions, no middleman, no account.</p>
+      <div class="legal">© 2026 CIRCUIT BENT. Every frame shown here is the plugin's own render.</div>
+    </div>
+    <div class="ftile f-nav">
+      <ul>
+        <li><a class="textlink" href="#showcase">Showcase</a></li>
+        <li><a class="textlink" href="#features">Features</a></li>
+        <li><a class="textlink" href="#pricing">Pricing</a></li>
+        <li><a class="textlink" href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="ftile f-time" id="f-time">Your local time</div>
+    <div class="ftile f-email"><a href="mailto:hello@circuitbent.app">hello@circuitbent.app</a></div>
+    <div class="ftile f-word"><span>CIRCUIT<br>BENT</span></div>
+    <a class="ftile f-invite" href="#pricing">
+      <div class="t">Start the trial</div>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4"><path d="M12 36 L36 12 M16 12 H36 V32"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script type="module" src="assets/site.js?v=2"></script>
+<script src="assets/base.js" defer></script>
+</body>
+</html>
