@@ -142,6 +142,13 @@ a.textlink:hover { text-decoration-color: var(--accent); color: var(--accent); }
 @keyframes cb-rise-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .hero-actions .textlink { color: var(--ink-muted); }
 
+/* ================= GLITCH CURSOR ================= */
+html.glitch-cursor-on, html.glitch-cursor-on * { cursor: none !important; }
+.glitch-cursor { position: fixed; top: 0; left: 0; width: 0; height: 0; z-index: 9999; pointer-events: none; }
+.gc-layer { position: absolute; top: -10px; left: -10px; width: 20px; height: 20px; border: 1.5px solid var(--ink); mix-blend-mode: difference; }
+.gc-b { border-color: var(--accent-strong); }
+.gc-c { top: -6px; left: -6px; width: 12px; height: 12px; border-color: var(--ink-muted); }
+
 .engine-frag { width: min(450px, 86vw); aspect-ratio: 1; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-900); position: relative; border: 1px solid var(--hairline); }
 .engine-frag canvas { width: 100%; height: 100%; display: block; }
 .engine-ui { position: absolute; inset: auto 0 0 0; padding: var(--space-3) var(--space-4); background: linear-gradient(to top, rgba(17,17,17,0.92), rgba(17,17,17,0)); display: flex; flex-direction: column; gap: var(--space-2); }
